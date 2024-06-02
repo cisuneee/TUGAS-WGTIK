@@ -1,0 +1,100 @@
+function kenaRazia(date, data) {
+  // Daftar lokasi ganjil genap
+  const ganjilGenapLocations = [
+    "Gajah Mada",
+    "Hayam Wuruk",
+    "Sisingamangaraja",
+    "Panglima Polim",
+    "Fatmawati",
+    "Tomang Raya"
+  ];
+
+  // Fungsi untuk mengecek apakah angka ganjil atau genap
+  function isEven(number) {
+    return number % 2 === 0;
+  }
+
+  // Fungsi untuk mendapatkan digit terakhir dari nomor plat
+  function getLastDigit(plat) {
+    for (let i = plat.length - 1; i >= 0; i--) {
+      if (!isNaN(plat[i])) {
+        return parseInt(plat[i]);
+      }
+    }
+    return null;
+  }
+
+  // Hasil akhir
+  const result = [];
+
+  // Iterasi melalui data kendaraan
+  for (let i = 0; i < data.length; i++) {
+    const vehicle = data[i];
+    if (vehicle.type !== "Mobil") continue;
+
+    const lastDigit = getLastDigit(vehicle.plat);
+    const isDateEven = isEven(date);
+    const isPlatEven = isEven(lastDigit);
+
+    let tilangCount = 0;
+
+    for (let j = 0; j < vehicle.rute.length; j++) {
+      const route = vehicle.rute[j];
+      if (ganjilGenapLocations.includes(route)) {
+        if ((isDateEven && !isPlatEven) || (!isDateEven && isPlatEven)) {
+          tilangCount++;
+        }
+      }
+    }
+
+    if (tilangCount > 0) {
+      result.push({ name: vehicle.name, tilang: tilangCount });
+    }
+  }
+
+  return result;
+}
+
+console.log(
+  kenaRazia(27, [
+    {
+      name: "Denver",
+      plat: "B 2791 KDS",
+      type: "Mobil",
+      rute: ["TB Simatupang", "Panglima Polim", "Depok", "Senen Raya"]
+    },
+    {
+      name: "Toni",
+      plat: "B 1212 JBB",
+      type: "Mobil",
+      rute: [
+        "Pintu Besar Selatan",
+        "Panglima Polim",
+        "Depok",
+        "Senen Raya",
+        "Kemang"
+      ]
+    },
+    {
+      name: "Stark",
+      plat: "B 444 XSX",
+      type: "Motor",
+      rute: ["Pondok Indah", "Depok", "Senen Raya", "Kemang"]
+    },
+    {
+      name: "Anna",
+      plat: "B 678 DD",
+      type: "Mobil",
+      rute: [
+        "Fatmawati",
+        "Panglima Polim",
+        "Depok",
+        "Senen Raya",
+        "Kemang",
+        "Gajah Mada"
+      ]
+    }
+  ])
+);
+
+// Output yang diharapkan: [ { name: 'Toni', tilang: 1 }, { name: 'Anna', tilang: 3 } ]
